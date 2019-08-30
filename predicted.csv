@@ -18,7 +18,7 @@ s.no,treatment
 17,No
 18,Yes
 19,Yes
-20,No
+20,Yes
 21,No
 22,Yes
 23,No
@@ -90,10 +90,10 @@ s.no,treatment
 89,Yes
 90,Yes
 91,No
-92,Yes
+92,No
 93,Yes
 94,Yes
-95,No
+95,Yes
 96,Yes
 97,Yes
 98,Yes
@@ -106,7 +106,7 @@ s.no,treatment
 105,No
 106,No
 107,No
-108,No
+108,Yes
 109,Yes
 110,Yes
 111,Yes
@@ -120,7 +120,7 @@ s.no,treatment
 119,Yes
 120,No
 121,No
-122,No
+122,Yes
 123,No
 124,Yes
 125,No
@@ -132,15 +132,15 @@ s.no,treatment
 131,Yes
 132,No
 133,Yes
-134,Yes
-135,Yes
+134,No
+135,No
 136,Yes
 137,Yes
 138,No
 139,Yes
 140,Yes
 141,Yes
-142,No
+142,Yes
 143,Yes
 144,No
 145,No
@@ -177,7 +177,7 @@ s.no,treatment
 176,No
 177,Yes
 178,No
-179,Yes
+179,No
 180,Yes
 181,Yes
 182,Yes
@@ -185,7 +185,7 @@ s.no,treatment
 184,Yes
 185,Yes
 186,No
-187,No
+187,Yes
 188,Yes
 189,No
 190,Yes
@@ -195,7 +195,7 @@ s.no,treatment
 194,No
 195,No
 196,Yes
-197,No
+197,Yes
 198,Yes
 199,Yes
 200,No
@@ -224,7 +224,7 @@ s.no,treatment
 223,Yes
 224,No
 225,Yes
-226,Yes
+226,No
 227,No
 228,Yes
 229,Yes

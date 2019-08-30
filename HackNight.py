@@ -6,12 +6,12 @@ from sklearn import preprocessing, model_selection, neighbors
 from sklearn.linear_model import LogisticRegression
 
 train_data = pd.read_csv('trainms.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity']
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
 features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
 train_data = train_data[features]
 
 
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity']
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
 features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
 train_data = train_data[features]
 
@@ -21,8 +21,8 @@ train_data = train_data[features]
 conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
               'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':0.25,'Very difficult':0}
 
-non_numerical = ['self_employed','family_history','treatment','work_interfere','remote_work','tech_company','benefits','care_options','wellness_program','seek_help',\
-                 'leave','mental_health_consequence','phys_health_consequence','coworkers','supervisor','mental_health_interview','phys_health_interview',\
+non_numerical = ['self_employed','family_history','treatment','remote_work','work_interfere','tech_company','benefits','seek_help',\
+                 'leave','mental_health_consequence','phys_health_consequence','mental_health_interview','phys_health_interview',\
                  'mental_vs_physical','obs_consequence']
 
 for i in features:
@@ -62,7 +62,7 @@ country={"united states":0,"canada":0,"united kingdom":0,"bulgaria":0,"france":0
          "japan":0,"nigeria":0,"croatia":0,"norway":0,"thailand":0,"denmark":0,"bahamas":0}
 
 
-lst=list(train_data["Country"])
+##lst=list(train_data["Country"])
 ##for i in range(len(lst)):
 ##    try:
 ##        country[str(lst[i]).lower()]+=1
@@ -71,16 +71,18 @@ lst=list(train_data["Country"])
 ##for i in range(len(lst)):
 ##    try:lst[i]=country[str(lst[i]).lower()]
 ##    except:lst[i]=-1
-a=-0.42
-for i in country.keys():
-    country[i]=a
-    a+=0.02
-for i in range(len(lst)):
-    try:lst[i]=country[str(lst[i]).lower()]
-    except:lst[i]=-1
 
 
-train_data["Country"]=lst
+##a=-0.42
+##for i in country.keys():
+##    country[i]=a
+##    a+=0.02
+##for i in range(len(lst)):
+##    try:lst[i]=country[str(lst[i]).lower()]
+##    except:lst[i]=-1
+
+
+##train_data["Country"]=lst
 
 
 X_train = np.array(train_data.drop(['treatment'],1))
@@ -89,12 +91,12 @@ y_train = np.array(train_data['treatment'])
 #print(X_train, X_test, y_train, y_test)
 
 X_test = pd.read_csv('testms.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity']
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
 features = [i for i in X_test.keys() if i not in labels_to_be_dropped]
 X_test = X_test[features]
 
 y_test = pd.read_csv('samplems.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity']
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
 y_test = y_test[[i for i in y_test.keys() if i not in labels_to_be_dropped]]
 
 clf = LogisticRegression()
@@ -129,19 +131,19 @@ for i in range(len(lst)):
         lst[i]=0.5#nigga
 X_test["Gender"]=lst
 
-lst=list(X_test["Country"])
-
-a=-0.42
-for i in country.keys():
-    country[i]=a
-    a+=0.02
-for i in range(len(lst)):
-    try:lst[i]=country[str(lst[i]).lower()]
-    except:lst[i]=-1
-
-
-
-X_test["Country"]=lst
+##lst=list(X_test["Country"])
+##
+##a=-0.42
+##for i in country.keys():
+##    country[i]=a
+##    a+=0.02
+##for i in range(len(lst)):
+##    try:lst[i]=country[str(lst[i]).lower()]
+##    except:lst[i]=-1
+##
+##
+##
+##X_test["Country"]=lst
 
 lst = [i for i in y_test['treatment']]
 for j in range(len(lst)):
