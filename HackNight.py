@@ -61,19 +61,26 @@ country={"united states":0,"canada":0,"united kingdom":0,"bulgaria":0,"france":0
          "japan":0,"nigeria":0,"croatia":0,"norway":0,"thailand":0,"denmark":0,"bahamas":0}
 
 
-lst=train_data["Country"]
+lst=list(train_data["Country"])
+##for i in range(len(lst)):
+##    try:
+##        country[str(lst[i]).lower()]+=1
+##    except:
+##        pass
+##for i in range(len(lst)):
+##    try:lst[i]=country[str(lst[i]).lower()]
+##    except:lst[i]=-1
+a=-21
+for i in country.keys():
+    country[i]=a
+    a+=1
 for i in range(len(lst)):
-    try:
-        country[str(lst[i]).lower()]+=1
-    except:
-        pass
-for i in range(len(lst)+1):
     try:lst[i]=country[str(lst[i]).lower()]
     except:lst[i]=-1
 
+
 train_data["Country"]=lst
 
-train_data.to_csv("test.csv")
 
 X_train = np.array(train_data.drop(['treatment'],1))
 y_train = np.array(train_data['treatment'])
@@ -121,21 +128,19 @@ for i in range(len(lst)):
         lst[i]=0.5#nigga
 X_test["Gender"]=lst
 
-lst=X_test["Country"]
-for i in range(len(lst)):
-    try:
-        country[str(lst[i]).lower()]+=1
-    except:
-        pass
+lst=list(X_test["Country"])
 
-for i in range(len(lst)+1):
-    try:
-        lst[i]=country[str(lst[i])]
-    except:
-        lst[i]=-1
+a=-21
+for i in country.keys():
+    country[i]=a
+    a+=1
+for i in range(len(lst)):
+    try:lst[i]=country[str(lst[i]).lower()]
+    except:lst[i]=-1
+
+
 
 X_test["Country"]=lst
-print(X_test["Country"])
 
 lst = [i for i in y_test['treatment']]
 for j in range(len(lst)):
