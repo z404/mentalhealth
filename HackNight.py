@@ -70,10 +70,10 @@ lst=list(train_data["Country"])
 ##for i in range(len(lst)):
 ##    try:lst[i]=country[str(lst[i]).lower()]
 ##    except:lst[i]=-1
-a=-21
+a=-0.42
 for i in country.keys():
     country[i]=a
-    a+=1
+    a+=0.02
 for i in range(len(lst)):
     try:lst[i]=country[str(lst[i]).lower()]
     except:lst[i]=-1
@@ -130,10 +130,10 @@ X_test["Gender"]=lst
 
 lst=list(X_test["Country"])
 
-a=-21
+a=-0.42
 for i in country.keys():
     country[i]=a
-    a+=1
+    a+=0.02
 for i in range(len(lst)):
     try:lst[i]=country[str(lst[i]).lower()]
     except:lst[i]=-1
