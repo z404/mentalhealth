@@ -9,6 +9,14 @@ labels_to_be_dropped = ['s.no','Timestamp','state','comments']
 features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
 train_data = train_data[features]
 
+
+labels_to_be_dropped = ['s.no','Timestamp','Country','state','comments']
+features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
+train_data = train_data[features]
+
+#conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
+#              'Often':0.3,'Rarely':0.25,'Never':0.5,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
+
 conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
               'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':0.25,'Very difficult':0}
 
@@ -29,9 +37,10 @@ for i in range(len(lst)):
         num1,num2 = lst[i].split('-')
         lst[i] = num2
     else:
-        lst[i] = 1500
+        lst[i] = 11100
 train_data['no_employees'] = lst
 
+<<<<<<< HEAD
 lst=list(train_data["Gender"])
 for i in range(len(lst)):
     if "cis" in lst[i].lower():
@@ -67,6 +76,23 @@ for i in range(len(lst)):
         lst[i]=-1
 
 train_data["Country"]=lst
+lst = list(train_data['Gender'])
+for i in range(len(lst)):
+    if 'cis' in lst[i].lower():
+        if 'f' in lst[i].lower():
+            lst[i] = 1
+        elif 'm' in lst[i].lower():
+            lst[i] = 0
+        else:
+            lst[i] = 0.5
+    elif 'f' in lst[i].lower():
+        lst[i] = 1
+    elif 'm' in lst[i].lower():
+        lst[i] = 0
+    else:
+        lst[i] = 0.5
+train_data['Gender'] = lst
+>>>>>>> 20b9747a8675cc77d4c4c89931c556c6ef2f4bb3
 
 X_train = np.array(train_data.drop(['treatment'],1))
 y_train = np.array(train_data['treatment'])
@@ -99,6 +125,7 @@ for i in range(len(lst)):
     else:
         lst[i] = 1500
 X_test['no_employees'] = lst
+<<<<<<< HEAD
 lst=list(X_test["Gender"])
 for i in range(len(lst)):
     if "cis" in lst[i].lower():
@@ -114,15 +141,36 @@ for i in range(len(lst)):
         lst[i]=0.5#nigga
 X_test["Gender"]=lst
 
+=======
+lst = list(X_test['Gender'])
+for i in range(len(lst)):
+    if 'cis' in lst[i].lower():
+        if 'f' in lst[i].lower():
+            lst[i] = 1
+        elif 'm' in lst[i].lower():
+            lst[i] = 0
+        else:
+            lst[i] = 0.5
+    elif 'f' in lst[i].lower():
+        lst[i] = 1
+    elif 'm' in lst[i].lower():
+        lst[i] = 0
+    else:
+        lst[i] = 0.5
+X_test['Gender'] = lst
+>>>>>>> 20b9747a8675cc77d4c4c89931c556c6ef2f4bb3
 
 lst = [i for i in y_test['treatment']]
 for j in range(len(lst)):
     lst[j] = conversion[str(lst[j])]
 y_test['treatment'] = lst
 
+<<<<<<< HEAD
 accuracy = clf.score(X_test, y_test)
 print(accuracy)
 
+=======
+>>>>>>> 20b9747a8675cc77d4c4c89931c556c6ef2f4bb3
 result = clf.predict(X_test)
 result = list(result)
 for i in range(len(result)):
@@ -138,6 +186,23 @@ csvstring=csvstring.strip()
 
 with open('predicted.csv','w') as file:
     file.write(csvstring)
+
+y_test = list(y_test['treatment'])
+for i in range(len(y_test)):
+    if y_test[i] == 1:
+        y_test[i] = 'Yes'
+    elif y_test[i] == 0:
+        y_test[i] = 'No'
+
+def compare(A,B):
+    #print(result,list(y_test['treatment']))
+    count_total, count_correct = 0,0
+    for i in range(len(A)):
+        count_total += 1
+        if A[i] == B[i]:
+            count_correct += 1
+    print(((count_correct/count_total)*100))
+compare(result,y_test)
 
 ##print(csvstring)
 ##resultdf = pd.DataFrame()
