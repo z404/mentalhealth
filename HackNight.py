@@ -10,7 +10,7 @@ features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
 train_data = train_data[features]
 
 
-labels_to_be_dropped = ['s.no','Timestamp','Country','state','comments']
+labels_to_be_dropped = ['s.no','Timestamp','state','comments']
 features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
 train_data = train_data[features]
 
@@ -37,10 +37,9 @@ for i in range(len(lst)):
         num1,num2 = lst[i].split('-')
         lst[i] = num2
     else:
-        lst[i] = 11100
+        lst[i] = 1500
 train_data['no_employees'] = lst
 
-<<<<<<< HEAD
 lst=list(train_data["Gender"])
 for i in range(len(lst)):
     if "cis" in lst[i].lower():
@@ -68,31 +67,13 @@ for i in range(len(lst)):
         country[str(lst[i]).lower()]+=1
     except:
         pass
-
-for i in range(len(lst)):
-    try:
-        lst[i]=country[str(lst[i])]
-    except:
-        lst[i]=-1
+for i in range(len(lst)+1):
+    try:lst[i]=country[str(lst[i]).lower()]
+    except:lst[i]=-1
 
 train_data["Country"]=lst
-lst = list(train_data['Gender'])
-for i in range(len(lst)):
-    if 'cis' in lst[i].lower():
-        if 'f' in lst[i].lower():
-            lst[i] = 1
-        elif 'm' in lst[i].lower():
-            lst[i] = 0
-        else:
-            lst[i] = 0.5
-    elif 'f' in lst[i].lower():
-        lst[i] = 1
-    elif 'm' in lst[i].lower():
-        lst[i] = 0
-    else:
-        lst[i] = 0.5
-train_data['Gender'] = lst
->>>>>>> 20b9747a8675cc77d4c4c89931c556c6ef2f4bb3
+
+train_data.to_csv("test.csv")
 
 X_train = np.array(train_data.drop(['treatment'],1))
 y_train = np.array(train_data['treatment'])
@@ -100,12 +81,12 @@ y_train = np.array(train_data['treatment'])
 #print(X_train, X_test, y_train, y_test)
 
 X_test = pd.read_csv('testms.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','Country','state','comments']
+labels_to_be_dropped = ['s.no','Timestamp','state','comments']
 features = [i for i in X_test.keys() if i not in labels_to_be_dropped]
 X_test = X_test[features]
 
 y_test = pd.read_csv('samplems.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','Country','state','comments']
+labels_to_be_dropped = ['s.no','Timestamp','state','comments']
 y_test = y_test[[i for i in y_test.keys() if i not in labels_to_be_dropped]]
 
 clf = neighbors.KNeighborsClassifier()
@@ -125,7 +106,6 @@ for i in range(len(lst)):
     else:
         lst[i] = 1500
 X_test['no_employees'] = lst
-<<<<<<< HEAD
 lst=list(X_test["Gender"])
 for i in range(len(lst)):
     if "cis" in lst[i].lower():
@@ -141,36 +121,30 @@ for i in range(len(lst)):
         lst[i]=0.5#nigga
 X_test["Gender"]=lst
 
-=======
-lst = list(X_test['Gender'])
+lst=X_test["Country"]
 for i in range(len(lst)):
-    if 'cis' in lst[i].lower():
-        if 'f' in lst[i].lower():
-            lst[i] = 1
-        elif 'm' in lst[i].lower():
-            lst[i] = 0
-        else:
-            lst[i] = 0.5
-    elif 'f' in lst[i].lower():
-        lst[i] = 1
-    elif 'm' in lst[i].lower():
-        lst[i] = 0
-    else:
-        lst[i] = 0.5
-X_test['Gender'] = lst
->>>>>>> 20b9747a8675cc77d4c4c89931c556c6ef2f4bb3
+    try:
+        country[str(lst[i]).lower()]+=1
+    except:
+        pass
+
+for i in range(len(lst)+1):
+    try:
+        lst[i]=country[str(lst[i])]
+    except:
+        lst[i]=-1
+
+X_test["Country"]=lst
+print(X_test["Country"])
 
 lst = [i for i in y_test['treatment']]
 for j in range(len(lst)):
     lst[j] = conversion[str(lst[j])]
 y_test['treatment'] = lst
 
-<<<<<<< HEAD
 accuracy = clf.score(X_test, y_test)
 print(accuracy)
 
-=======
->>>>>>> 20b9747a8675cc77d4c4c89931c556c6ef2f4bb3
 result = clf.predict(X_test)
 result = list(result)
 for i in range(len(result)):
