@@ -10,6 +10,62 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.svm import SVC
 
+'''
+HackNight solution!
+
+functions requied:
+1) read csv(filename):
+        return dataframe
+2) get labels and drop unwanted labels(dataframe, unwanted labels):
+        return dataframe
+2) convert dataframe to numbers(dataframe):
+        return dataframe
+3) predict dataset using LogisticRegression(train_dataset):
+        return predicton_list
+'''
+
+def read_csv_to_dataframe(filename):
+    df = pd.read_csv(filename,header=0, parse_dates=True)
+    return df
+
+def drop_labels(dataframe,unwanted_labels):
+    current_labels = dataframe.columns.tolist()
+    drop_labels = []
+    for i in unwanted_labels:
+        if i in current_labels:
+            drop_labels.append(i)
+    df = dataframe.drop(drop_labels,1)
+    return df 
+
+def convert_to_integer(dataframe):
+    non_numerical = ['self_employed','family_history','treatment','remote_work','work_interfere','tech_company','benefits','seek_help',\
+                     'leave','mental_health_consequence','phys_health_consequence','mental_health_interview','phys_health_interview',\
+                     'mental_vs_physical','obs_consequence','supervisor']
+    current_labels = dataframe.columns.tolist()
+    string_feature_list = []
+    for i in non_numerical:
+        if i in current_labels:
+            string_feature_list.append(i)
+    conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
+                  'Often':0.3,'Rarely':0.25,'Never':0.5,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
+    list_in_focus = []
+    for i in string_feature_list:
+        list_in_focus = list(dataframe[i])
+        for j in range(len(list_in_focus)):
+            list_in_focus[j] = conversion[str(list_in_focus[j])]
+        dataframe[i] = list_in_focus
+
+    #include gender, no_employees
+    return dataframe
+
+
+raw_train_data = read_csv_to_dataframe('trainms.csv')
+dropped_train_data = drop_labels(raw_train_data,['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"])
+train_data = convert_to_integer(dropped_train_data)
+print(train_data.head())
+train_data.to_csv('trial.csv')
+
+'''
 train_data = pd.read_csv('trainms.csv',header=0, index_col = 's.no',parse_dates=True)
 labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
 features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
@@ -218,3 +274,4 @@ compare(result,y_test)
 ##print(len(clf.predict(lst)))
 ##print(clf.predict(lst))
 #train_data.to_csv('trial.csv')
+'''
