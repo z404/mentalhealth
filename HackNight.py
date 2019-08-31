@@ -4,14 +4,19 @@ import matplotlib.pyplot as pl
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing, model_selection, neighbors
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.svm import SVC
 
 train_data = pd.read_csv('trainms.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
 features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
 train_data = train_data[features]
 
 
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
 features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
 train_data = train_data[features]
 
@@ -91,15 +96,22 @@ y_train = np.array(train_data['treatment'])
 #print(X_train, X_test, y_train, y_test)
 
 X_test = pd.read_csv('testms.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
 features = [i for i in X_test.keys() if i not in labels_to_be_dropped]
 X_test = X_test[features]
 
 y_test = pd.read_csv('samplems.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"age","Country"]
+labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
 y_test = y_test[[i for i in y_test.keys() if i not in labels_to_be_dropped]]
 
-clf = LogisticRegression()
+clf = LogisticRegression()              #79
+#clf = neighbors.KNeighborsClassifier()  #63
+#clf = RandomForestClassifier()          #77
+#clf = AdaBoostClassifier()              #77
+#clf = GaussianProcessClassifier()       #65
+#clf = DecisionTreeClassifier()          #71
+#clf = QuadraticDiscriminantAnalysis()   #68
+#clf = SVC()                             #69
 clf.fit(X_train, y_train)
 
 for i in features:
