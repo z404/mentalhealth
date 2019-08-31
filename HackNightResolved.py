@@ -53,7 +53,7 @@ def convert_to_integer(dataframe):
     #converts all default strings to numbers in the dataframe
     non_numerical = ['self_employed','family_history','treatment','remote_work','work_interfere','tech_company','benefits','seek_help',\
                      'leave','mental_health_consequence','phys_health_consequence','mental_health_interview','phys_health_interview',\
-                     'mental_vs_physical','obs_consequence','supervisor']
+                     'mental_vs_physical','obs_consequence','supervisor','care_options']
     current_labels = dataframe.columns.tolist()
     string_feature_list = []
     for i in non_numerical:
@@ -62,7 +62,7 @@ def convert_to_integer(dataframe):
 ##    conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
 ##                  'Often':0.3,'Rarely':0.25,'Never':0.5,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
     conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
-                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':0.25,'Very difficult':0}
+                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
     list_in_focus = []
     for i in string_feature_list:
         list_in_focus = list(dataframe[i])
@@ -95,13 +95,22 @@ def convert_to_integer(dataframe):
             else:
                 list_in_focus[i] = 1500
         dataframe['no_employees'] = list_in_focus
+
+    #getting hours
+##    if 'Timestamp' in current_labels:
+##        list_in_focus = list(dataframe['Timestamp'])
+##        for i in range(len(list_in_focus)):
+##            date = list_in_focus[i].split()[0].split('-')
+##            time = list_in_focus[i].split()[1].split(':')
+##            list_in_focus[i] = int(date[2])*10+int(time[0])+(0.01*int(time[1]))
+##        dataframe['Timestamp'] = list_in_focus
     return dataframe
 
 def train_and_predict(dataframe):
     #training with model
-    clf = LogisticRegression(C=4, penalty='l1', verbose=5)              #79
-    #clf2 = neighbors.KNeighborsClassifier()  #63
-    #clf2 = RandomForestClassifier()          #77
+    #clf2 = LogisticRegression(C=4, penalty='l1', verbose=5)              #79
+    #clf = neighbors.KNeighborsClassifier(n_neighbors=6)  #63
+    clf = RandomForestClassifier(n_estimators = 15000, min_samples_leaf = 80)          #77
     #clf2 = AdaBoostClassifier()              #77
     #clf = GaussianProcessClassifier()       #65
     #clf2 = DecisionTreeClassifier()          #71
@@ -151,7 +160,7 @@ test_data= convert_to_integer(dropped_test_data)
 
 solution_data = read_csv_to_dataframe('samplems.csv')
 conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
-                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':0.25,'Very difficult':0}
+                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':0}
 lst = [i for i in solution_data['treatment']]
 for j in range(len(lst)):
     lst[j] = conversion[str(lst[j])]
@@ -160,6 +169,12 @@ solution_data['treatment'] = lst
 result = predict_with_model(trained_model,test_data)
 score_model_offline(trained_model,test_data,solution_data)
 result_to_modified_csv(result,'predicted2.csv')
+print(len(test_data.columns.tolist()))
+print(len(trained_model.feature_importances_))
+print(trained_model.feature_importances_)
+for i in range(len(trained_model.feature_importances_)):
+    print(test_data.columns.tolist()[i],end=':')
+    print(float(trained_model.feature_importances_[i])*100)
 #train_data.to_csv('trial.csv')
 '''
 train_data = pd.read_csv('trainms.csv',header=0, index_col = 's.no',parse_dates=True)
