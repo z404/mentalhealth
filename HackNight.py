@@ -105,19 +105,20 @@ y_test = pd.read_csv('samplems.csv',header=0, index_col = 's.no',parse_dates=Tru
 labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','wellness_program','supervisor','care_options',"Country"]
 y_test = y_test[[i for i in y_test.keys() if i not in labels_to_be_dropped]]
 
-clf1 = LogisticRegression(C=5, penalty='l1', verbose=5)              #79
+clf = LogisticRegression(C=4, penalty='l1', verbose=5)              #79
 #clf2 = neighbors.KNeighborsClassifier()  #63
-clf2 = RandomForestClassifier()          #77
+#clf2 = RandomForestClassifier()          #77
 #clf2 = AdaBoostClassifier()              #77
 #clf = GaussianProcessClassifier()       #65
 #clf2 = DecisionTreeClassifier()          #71
 #clf2 = QuadraticDiscriminantAnalysis()   #68
 #clf2 = SVC()                             #69
 
-clf = VotingClassifier(estimators=[('LR',clf1), ('AB', clf2)],
-                        voting='soft',
-                        weights=[1, 1])
+#clf = VotingClassifier(estimators=[('LR',clf1), ('AB', clf2)],
+#                        voting='soft',
+#                        weights=[1, 1])
 clf.fit(X_train, y_train)
+print(X_train)
 
 for i in features:
     if i in non_numerical and i!='treatment':
@@ -166,7 +167,6 @@ lst = [i for i in y_test['treatment']]
 for j in range(len(lst)):
     lst[j] = conversion[str(lst[j])]
 y_test['treatment'] = lst
-
 accuracy = clf.score(X_test, y_test)
 print(accuracy)
 
