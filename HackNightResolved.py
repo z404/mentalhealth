@@ -4,10 +4,10 @@ import matplotlib.pyplot as pl
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing, model_selection, neighbors
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, VotingClassifier, ExtraTreesClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis,LinearDiscriminantAnalysis 
 from sklearn.svm import SVC
 import warnings
 
@@ -59,10 +59,8 @@ def convert_to_integer(dataframe):
     for i in non_numerical:
         if i in current_labels:
             string_feature_list.append(i)
-##    conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
-##                  'Often':0.3,'Rarely':0.25,'Never':0.5,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
-    conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
-                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
+    conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":1.5,'Not sure':2.5,'Maybe':1.5,'Some of them':-0.5,\
+                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':-0.75,'Somewhat difficult':0.5,'Very difficult':-1}
     list_in_focus = []
     for i in string_feature_list:
         list_in_focus = list(dataframe[i])
@@ -96,6 +94,137 @@ def convert_to_integer(dataframe):
                 list_in_focus[i] = 1500
         dataframe['no_employees'] = list_in_focus
 
+    if 'care_options' in current_labels and 'wellness_program' in current_labels:
+        co = list(dataframe['care_options'])
+        wp = list(dataframe['wellness_program'])
+        combined_co_wp = []
+        for i in range(len(co)):
+            a = co[i]
+            b = wp[i]
+            if i == 0 and j == 0:
+                combined_co_wp.append(-7)
+            elif i == 1 and j == 0:
+                combined_co_wp.append(-1)
+            elif i == 0 and j == 1:
+                combined_co_wp.append(1)
+            else:
+                combined_co_wp.append(7)
+        dataframe['combined_co_wp'] = combined_co_wp
+        dataframe = dataframe.drop(['care_options','wellness_program'],1)
+
+    if 'combined_co_wp' in current_labels and 'mental_health_consequence' in current_labels:
+        co = list(dataframe['combined_co_wp'])
+        wp = list(dataframe['mental_health_consequence'])
+        combined_co_wp = []
+        for i in range(len(co)):
+            a = co[i]
+            b = wp[i]
+            if i == 0 and j == 0:
+                combined_co_wp.append(-7)
+            elif i == 1 and j == 0:
+                combined_co_wp.append(-1)
+            elif i == 0 and j == 1:
+                combined_co_wp.append(1)
+            else:
+                combined_co_wp.append(7)
+        dataframe['combined_co_wp_be'] = combined_co_wp
+        dataframe = dataframe.drop(['combined_co_wp','mental_health_consequence'],1)
+
+    if 'phys_health_interview' in current_labels and 'phys_health_consequence' in current_labels:
+        co = list(dataframe['phys_health_interview'])
+        wp = list(dataframe['phys_health_consequence'])
+        combined_co_wp = []
+        for i in range(len(co)):
+            a = co[i]
+            b = wp[i]
+            if i == 0 and j == 0:
+                combined_co_wp.append(-7)
+            elif i == 1 and j == 0:
+                combined_co_wp.append(-1)
+            elif i == 0 and j == 1:
+                combined_co_wp.append(1)
+            else:
+                combined_co_wp.append(7)
+        dataframe['combined_co_wp_be_al'] = combined_co_wp
+        dataframe = dataframe.drop(['phys_health_interview','phys_health_consequence'],1)
+
+    if 'coworkers' in current_labels and 'supervisor' in current_labels:
+        co = list(dataframe['coworkers'])
+        wp = list(dataframe['supervisor'])
+        combined_co_wp = []
+        for i in range(len(co)):
+            a = co[i]
+            b = wp[i]
+            if i == 0 and j == 0:
+                combined_co_wp.append(-7)
+            elif i == 1 and j == 0:
+                combined_co_wp.append(-1)
+            elif i == 0 and j == 1:
+                combined_co_wp.append(1)
+            else:
+                combined_co_wp.append(7)
+        dataframe['combined_co_wp_be_al_qw'] = combined_co_wp
+        dataframe = dataframe.drop(['coworkers','supervisor'],1)
+
+    current_labels = dataframe.columns.tolist()
+    print(current_labels)
+    if 'combined_co_wp_be_al_qw' in current_labels and 'remote_work' in current_labels:
+        print('hi')
+        co = list(dataframe['combined_co_wp_be_al_qw'])
+        wp = list(dataframe['remote_work'])
+        combined_co_wp = []
+        for i in range(len(co)):
+            a = co[i]
+            b = wp[i]
+            if i == 0 and j == 0:
+                combined_co_wp.append(-7)
+            elif i == 1 and j == 0:
+                combined_co_wp.append(-1)
+            elif i == 0 and j == 1:
+                combined_co_wp.append(1)
+            else:
+                combined_co_wp.append(7)
+        dataframe['combined_co_wp_be_al_q'] = combined_co_wp
+        dataframe = dataframe.drop(['combined_co_wp_be_al_qw','remote_work'],1)
+
+    if 'mental_vs_physical' in current_labels and 'obs_consequence' in current_labels:
+        print('hi')
+        co = list(dataframe['mental_vs_physical'])
+        wp = list(dataframe['obs_consequence'])
+        combined_co_wp = []
+        for i in range(len(co)):
+            a = co[i]
+            b = wp[i]
+            if i == 0 and j == 0:
+                combined_co_wp.append(-7)
+            elif i == 1 and j == 0:
+                combined_co_wp.append(-1)
+            elif i == 0 and j == 1:
+                combined_co_wp.append(1)
+            else:
+                combined_co_wp.append(7)
+        dataframe['combined_co_wp_be_a'] = combined_co_wp
+        dataframe = dataframe.drop(['mental_vs_physical','obs_consequence'],1)
+
+##    if 'combined_co_wp_be_a' in current_labels and 'Gender' in current_labels:
+##        print('hi')
+##        co = list(dataframe['combined_co_wp_be_a'])
+##        wp = list(dataframe['Gender'])
+##        combined_co_wp = []
+##        for i in range(len(co)):
+##            a = co[i]
+##            b = wp[i]
+##            if i == 0 and j == 0:
+##                combined_co_wp.append(-7)
+##            elif i == 1 and j == 0:
+##                combined_co_wp.append(-1)
+##            elif i == 0 and j == 1:
+##                combined_co_wp.append(1)
+##            else:
+##                combined_co_wp.append(7)
+##        dataframe['combined_co_wp_b'] = combined_co_wp
+##        dataframe = dataframe.drop(['combined_co_wp_be_a','Gender'],1)
+    
     #getting hours
 ##    if 'Timestamp' in current_labels:
 ##        list_in_focus = list(dataframe['Timestamp'])
@@ -110,13 +239,14 @@ def train_and_predict(dataframe):
     #training with model
     #clf2 = LogisticRegression(C=4, penalty='l1', verbose=5)              #79
     #clf = neighbors.KNeighborsClassifier(n_neighbors=6)  #63
-    clf = RandomForestClassifier(n_estimators = 15000, min_samples_leaf = 80)          #77
+    clf = RandomForestClassifier(n_estimators = 15000,min_samples_leaf = 80)#, max_depth=None)          #77
     #clf2 = AdaBoostClassifier()              #77
     #clf = GaussianProcessClassifier()       #65
     #clf2 = DecisionTreeClassifier()          #71
     #clf2 = QuadraticDiscriminantAnalysis()   #68
     #clf2 = SVC()                             #69
 
+    #clf = LinearDiscriminantAnalysis()
     X_train = np.array(train_data.drop(['treatment'],1))
     y_train = np.array(train_data['treatment'])
 
@@ -149,9 +279,10 @@ def score_model_offline(model,X_test,y_test):
     print(model.score(X_test,y_test))
 
 raw_train_data = read_csv_to_dataframe('trainms.csv')
-dropped_columns = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
+dropped_columns = ['s.no','Timestamp','state','comments',"Country",'anonymity']
 dropped_train_data = drop_labels(raw_train_data,dropped_columns)
 train_data = convert_to_integer(dropped_train_data)
+
 trained_model = train_and_predict(train_data)
 
 raw_test_data = read_csv_to_dataframe('testms.csv')
@@ -160,7 +291,7 @@ test_data= convert_to_integer(dropped_test_data)
 
 solution_data = read_csv_to_dataframe('samplems.csv')
 conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
-                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':0}
+                  'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
 lst = [i for i in solution_data['treatment']]
 for j in range(len(lst)):
     lst[j] = conversion[str(lst[j])]
@@ -169,220 +300,27 @@ solution_data['treatment'] = lst
 result = predict_with_model(trained_model,test_data)
 score_model_offline(trained_model,test_data,solution_data)
 result_to_modified_csv(result,'predicted2.csv')
-print(len(test_data.columns.tolist()))
-print(len(trained_model.feature_importances_))
-print(trained_model.feature_importances_)
-for i in range(len(trained_model.feature_importances_)):
-    print(test_data.columns.tolist()[i],end=':')
-    print(float(trained_model.feature_importances_[i])*100)
+##
+##print(len(test_data.columns.tolist()))
+##print(len(trained_model.feature_importances_))
+##print(trained_model.feature_importances_)
+##for i in range(len(trained_model.feature_importances_)):
+##    print(test_data.columns.tolist()[i],end=':')
+##    print(float(trained_model.feature_importances_[i])*100)
 #train_data.to_csv('trial.csv')
+
 '''
-train_data = pd.read_csv('trainms.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
-features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
-train_data = train_data[features]
+clf = RandomForestClassifier(n_estimators = 15000, min_samples_leaf = 80)#, max_depth=None)#, min_samples_split=3)          #77
+#clf = ExtraTreesClassifier(n_estimators=15000, max_depth=None,min_samples_split=2, random_state=0)
+#clf = LinearDiscriminantAnalysis()
 
+X = train_data.drop(['treatment'],1)
+y = train_data['treatment']
 
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','supervisor','wellness_program','care_options',"Country"]
-features = [i for i in train_data.keys() if i not in labels_to_be_dropped]
-train_data = train_data[features]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
-#conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
-#              'Often':0.3,'Rarely':0.25,'Never':0.5,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':1,'Very difficult':-1}
-
-conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
-              'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':0.75,'Somewhat difficult':0.25,'Very difficult':0}
-
-non_numerical = ['self_employed','family_history','treatment','remote_work','work_interfere','tech_company','benefits','seek_help',\
-                 'leave','mental_health_consequence','phys_health_consequence','mental_health_interview','phys_health_interview',\
-                 'mental_vs_physical','obs_consequence','supervisor']
-
-for i in features:
-    print(i)
-    if i in non_numerical:
-        lst = [i for i in train_data[i]]
-        for j in range(len(lst)):
-            lst[j] = conversion[str(lst[j])]
-        train_data[i] = lst
-
-lst = [i for i in train_data['no_employees']]
-for i in range(len(lst)):
-    if '-' in lst[i]:
-        num1,num2 = lst[i].split('-')
-        lst[i] = num2
-    else:
-        lst[i] = 1500
-train_data['no_employees'] = lst
-
-lst=list(train_data["Gender"])
-for i in range(len(lst)):
-    if "cis" in lst[i].lower():
-        if "f" in lst[i].lower():
-            lst[i]=1
-        else:
-            lst[i]=0
-    elif "f" in lst[i].lower():
-        lst[i]=1
-    elif "m" in lst[i].lower():
-        lst[i]=0
-    else:
-        lst[i]=0.5#nigga
-train_data["Gender"]=lst
-
-country={"united states":0,"canada":0,"united kingdom":0,"bulgaria":0,"france":0,"portugal":0,"netherlandsd":0,"switzerland":0,"poland":0,"australia":0,"germany":0,\
-         "russia":0,"mexico":0,"brazil":0,"slovenia":0,"costa rica":0,"austria":0,"ireland":0,"india":0,"south africa":0,"italy":0,"sweden":0,"columbia":0,"latvia":0,\
-         "romania":0,"belgium":0,"new zealand":0,"zimbabwe":0,"spain":0,"finland":0,"uruguay":0,"israel":0,"bosnia and herzegovina":0,"hungar":0,"singapore":0,\
-         "japan":0,"nigeria":0,"croatia":0,"norway":0,"thailand":0,"denmark":0,"bahamas":0}
-
-
-##lst=list(train_data["Country"])
-##for i in range(len(lst)):
-##    try:
-##        country[str(lst[i]).lower()]+=1
-##    except:
-##        pass
-##for i in range(len(lst)):
-##    try:lst[i]=country[str(lst[i]).lower()]
-##    except:lst[i]=-1
-
-
-##a=-0.42
-##for i in country.keys():
-##    country[i]=a
-##    a+=0.02
-##for i in range(len(lst)):
-##    try:lst[i]=country[str(lst[i]).lower()]
-##    except:lst[i]=-1
-
-
-##train_data["Country"]=lst
-
-
-X_train = np.array(train_data.drop(['treatment'],1))
-y_train = np.array(train_data['treatment'])
-#X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.2)
-#print(X_train, X_test, y_train, y_test)
-
-X_test = pd.read_csv('testms.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','wellness_program','supervisor','care_options',"Country"]
-features = [i for i in X_test.keys() if i not in labels_to_be_dropped]
-X_test = X_test[features]
-
-y_test = pd.read_csv('samplems.csv',header=0, index_col = 's.no',parse_dates=True)
-labels_to_be_dropped = ['s.no','Timestamp','state','comments','anonymity','coworkers','wellness_program','supervisor','care_options',"Country"]
-y_test = y_test[[i for i in y_test.keys() if i not in labels_to_be_dropped]]
-
-clf1 = LogisticRegression(C=5, penalty='l1', verbose=5)              #79
-#clf2 = neighbors.KNeighborsClassifier()  #63
-clf2 = RandomForestClassifier()          #77
-#clf2 = AdaBoostClassifier()              #77
-#clf = GaussianProcessClassifier()       #65
-#clf2 = DecisionTreeClassifier()          #71
-#clf2 = QuadraticDiscriminantAnalysis()   #68
-#clf2 = SVC()                             #69
-
-clf = VotingClassifier(estimators=[('LR',clf1), ('AB', clf2)],
-                        voting='soft',
-                        weights=[1, 1])
+#clf = VotingClassifier(estimators=[('LR',clf1), ('AB', clf2)], voting='soft', weights=[1, 1])
 clf.fit(X_train, y_train)
+print(clf.score(X_test,y_test))
 
-for i in features:
-    if i in non_numerical and i!='treatment':
-        lst = [i for i in X_test[i]]
-        for j in range(len(lst)):
-            lst[j] = conversion[str(lst[j])]
-        X_test[i] = lst
-lst = [i for i in X_test['no_employees']]
-for i in range(len(lst)):
-    if '-' in lst[i]:
-        num1,num2 = lst[i].split('-')
-        lst[i] = num2
-    else:
-        lst[i] = 1500
-X_test['no_employees'] = lst
-lst=list(X_test["Gender"])
-for i in range(len(lst)):
-    if "cis" in lst[i].lower():
-        if "f" in lst[i].lower():
-            lst[i]=1
-        else:
-            lst[i]=0
-    elif "f" in lst[i].lower():
-        lst[i]=1
-    elif "m" in lst[i].lower():
-        lst[i]=0
-    else:
-        lst[i]=0.5#nigga
-X_test["Gender"]=lst
-
-##lst=list(X_test["Country"])
-##
-##a=-0.42
-##for i in country.keys():
-##    country[i]=a
-##    a+=0.02
-##for i in range(len(lst)):
-##    try:lst[i]=country[str(lst[i]).lower()]
-##    except:lst[i]=-1
-##
-##
-##
-##X_test["Country"]=lst
-
-lst = [i for i in y_test['treatment']]
-for j in range(len(lst)):
-    lst[j] = conversion[str(lst[j])]
-y_test['treatment'] = lst
-
-accuracy = clf.score(X_test, y_test)
-print(accuracy)
-
-result = clf.predict(X_test)
-result = list(result)
-for i in range(len(result)):
-    if result[i] == 1:
-        result[i] = 'Yes'
-    elif result[i] == 0:
-        result[i] = 'No'
-
-csvstring = 's.no,treatment\n'
-for i in range(len(result)):
-    csvstring+=str(i+1)+','+result[i]+'\n'
-csvstring=csvstring.strip()
-
-with open('predicted.csv','w') as file:
-    file.write(csvstring)
-
-y_test = list(y_test['treatment'])
-for i in range(len(y_test)):
-    if y_test[i] == 1:
-        y_test[i] = 'Yes'
-    elif y_test[i] == 0:
-        y_test[i] = 'No'
-
-def compare(A,B):
-    #print(result,list(y_test['treatment']))
-    count_total, count_correct = 0,0
-    for i in range(len(A)):
-        count_total += 1
-        if A[i] == B[i]:
-            count_correct += 1
-    print(((count_correct/count_total)*100))
-compare(result,y_test)
-
-##print(csvstring)
-##resultdf = pd.DataFrame()
-##resultdf['s.no'] = [i for i in range(1,len(result)+1)]
-##resultdf['treatment'] = result
-###print(resultdf.head())
-###y_te['treatment'] = result
-##resultdf.to_csv('predicted.csv')
-##print(resultdf.columns)
-#print(y_test.keys())
-
-##lst = [i for i in X_test]
-##print(len(lst))
-##print(len(clf.predict(lst)))
-##print(clf.predict(lst))
-#train_data.to_csv('trial.csv')
 '''
