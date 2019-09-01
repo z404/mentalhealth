@@ -30,6 +30,7 @@ functions requied:
 5) convert prediction to output csv(prediction):
         return csvstring
 6) write to csv(csvstring)
+7) trial with offline result
 '''
 
 
@@ -97,6 +98,7 @@ def convert_to_integer(dataframe):
     return dataframe
 
 def train_and_predict(dataframe):
+    #training with model
     clf = LogisticRegression(C=4, penalty='l1', verbose=5)              #79
     #clf2 = neighbors.KNeighborsClassifier()  #63
     #clf2 = RandomForestClassifier()          #77
@@ -115,10 +117,12 @@ def train_and_predict(dataframe):
     return clf
 
 def predict_with_model(model,test_data):
+    #predicting test data
     result = model.predict(test_data)
     return result
 
 def result_to_modified_csv(result,filename):
+    #write to csv
     csvstring = 's.no,treatment\n'
     result = list(result)
     for i in range(len(result)):
@@ -132,6 +136,7 @@ def result_to_modified_csv(result,filename):
         file.write(csvstring)
 
 def score_model_offline(model,X_test,y_test):
+    #score offline
     print(model.score(X_test,y_test))
 
 raw_train_data = read_csv_to_dataframe('trainms.csv')
