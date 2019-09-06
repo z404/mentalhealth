@@ -26,9 +26,20 @@ def clear_window(window):
     for ele in window.winfo_children():
         ele.destroy()
 
+def show_and_back(string):
+    clear_window(root)
+    label = tk.Label(root,text = string, font= 'Ariel 28 bold')
+    label.pack()
+    def back():
+        clear_window(root)
+        start()
+    button = tk.Button(root, text = 'Back', command = back, font = 'Ariel 28 bold')
+    button.pack()
+
 def finish():
     clear_window(root)
-    label = tk.Label(text = '', font= 'Ariel 28 bold')
+    label = tk.Label(root,text = 'Processing, Please wait.....', font= 'Ariel 28 bold')
+    label.pack()
     ######
     def read_csv_to_dataframe(filename):
         #reads csv and makes it a pandas dataframe
@@ -66,6 +77,7 @@ def finish():
             
         if 'Gender' in current_labels:
             list_in_focus=list(dataframe["Gender"])
+            print('gender',list_in_focus)
             for i in range(len(list_in_focus)):
                 if "cis" in list_in_focus[i].lower():
                     if "f" in list_in_focus[i].lower():
@@ -275,6 +287,10 @@ def finish():
         print(model.score(X_test,y_test))
 
     raw_train_data = read_csv_to_dataframe('trainms.csv')
+    col = [i for i in raw_train_data.columns]
+    
+    ndf = pd.DataFrame(columns=col)
+    
     dropped_columns = ['s.no','Timestamp','state','comments',"Country",'anonymity']
     dropped_train_data = drop_labels(raw_train_data,dropped_columns)
     train_data = convert_to_integer(dropped_train_data)
@@ -286,43 +302,53 @@ def finish():
             templst = [i for i in final_dict.values()]
             lst.append(templst[i])
     print(lst)
-    conversion = {'nan':-1,'Yes':1,'No':0,"I don't know":1.5,'Not sure':2.5,'Maybe':1.5,'Some of them':-0.5,\
-                      'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':-0.75,'Somewhat difficult':0.5,'Very difficult':-1}
-    for i in range(len(lst)):
-        try:
-            lst[i] = conversion[lst[i]]
-        except:
-            pass
-    if "cis" in lst[1].lower():
-        if "f" in lst[1].lower():
-            lst[1]=1
-        else:
-            lst[1]=0
-    elif "f" in lst[1].lower():
-        lst[1]=1
-    elif "m" in lst[1].lower():
-        lst[1]=0
-    else:
-        lst[1]=0.5
-    print(lst)
-    for i in range(len(lst)):
-        if '-' in str(lst[i]) or 'More' in str(lst[i]):
-            if '-' in lst:
-                num1,num2 = lst[i].split('-')
-                lst[i] = num2
-            else:
-                lst[i] = 1500
-    lst = [lst[i] for i in range(-1,-len(lst),-1) if i not in [-2,-6,-9,-7]]#,-8]]#,-14]]
-    newlst = [lst]
-    print(newlst)
-    result = trained_model.predict(newlst)
+
+    #not working, maybe convert to temp csv?
+    ndf = ndf.append([lst])
+    print('hello',ndf)
+    dropped_columns = ['s.no','Timestamp','state','comments',"Country",'anonymity']
+    dropped_test_data = drop_labels(ndf,dropped_columns)
+    test_data = convert_to_integer(dropped_test_data)
+    result = predict_with_model(trained_model,test_data)
     print(result)
-    if '0' in str(result):
-        result = 'does not'
-    else:
-        result = 'does'
-    string = 'The employee '+result[0]+' require treatment'
-    label.config(text=string)   
+    
+##    conversion = {'nan':-1,'Yes':1,'No':0,"I don't know":1.5,'Not sure':2.5,'Maybe':1.5,'Some of them':-0.5,\
+##                      'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':-0.75,'Somewhat difficult':0.5,'Very difficult':-1}
+##    for i in range(len(lst)):
+##        try:
+##            lst[i] = conversion[lst[i]]
+##        except:
+##            pass
+##    if "cis" in lst[1].lower():
+##        if "f" in lst[1].lower():
+##            lst[1]=1
+##        else:
+##            lst[1]=0
+##    elif "f" in lst[1].lower():
+##        lst[1]=1
+##    elif "m" in lst[1].lower():
+##        lst[1]=0
+##    else:
+##        lst[1]=0.5
+##    print(lst)
+##    for i in range(len(lst)):
+##        if '-' in str(lst[i]) or 'More' in str(lst[i]):
+##            if '-' in lst:
+##                num1,num2 = lst[i].split('-')
+##                lst[i] = num2
+##            else:
+##                lst[i] = 1500
+##    lst = [lst[i] for i in range(-1,-len(lst),-1) if i not in [-2,-6,-9,-7]]#,-8]]#,-14]]
+##    newlst = [lst]
+##    print(newlst)
+##    result = trained_model.predict(newlst)
+##    print(result)
+##    if '0' in str(result):
+##        result = 'does not'
+##    else:
+##        result = 'does'
+##    string = 'The employee '+result+' require treatment'
+    show_and_back(string)   
     
 
 def fill_form4():
