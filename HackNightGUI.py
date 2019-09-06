@@ -282,14 +282,46 @@ def finish():
     lst = []
     for i in range(len(final_dict.keys())):
         klst = [i for i in final_dict.keys()]
-        if f[i] not in dropped_columns:
-            lst+=final_dict.values()[i]
-    result = trained_model.predict(lst)
+        if klst[i] not in dropped_columns:
+            templst = [i for i in final_dict.values()]
+            lst.append(templst[i])
+    print(lst)
+    conversion = {'nan':-1,'Yes':1,'No':0,"I don't know":1.5,'Not sure':2.5,'Maybe':1.5,'Some of them':-0.5,\
+                      'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':-0.75,'Somewhat difficult':0.5,'Very difficult':-1}
+    for i in range(len(lst)):
+        try:
+            lst[i] = conversion[lst[i]]
+        except:
+            pass
+    if "cis" in lst[1].lower():
+        if "f" in lst[1].lower():
+            lst[1]=1
+        else:
+            lst[1]=0
+    elif "f" in lst[1].lower():
+        lst[1]=1
+    elif "m" in lst[1].lower():
+        lst[1]=0
+    else:
+        lst[1]=0.5
+    print(lst)
+    for i in range(len(lst)):
+        if '-' in str(lst[i]) or 'More' in str(lst[i]):
+            if '-' in lst:
+                num1,num2 = lst[i].split('-')
+                lst[i] = num2
+            else:
+                lst[i] = 1500
+    lst = [lst[i] for i in range(-1,-len(lst),-1) if i not in [-2,-6,-9,-7]]#,-8]]#,-14]]
+    newlst = [lst]
+    print(newlst)
+    result = trained_model.predict(newlst)
+    print(result)
     if '0' in str(result):
         result = 'does not'
     else:
         result = 'does'
-    string = 'The employee '+result+' require treatment'
+    string = 'The employee '+result[0]+' require treatment'
     label.config(text=string)   
     
 
@@ -335,12 +367,12 @@ def fill_form4():
     droplist11.grid(row=3,column=1)
 
     obc_Label = tk.Label(Frame, text='Have you heard of or observed negative consequences \nfor coworkers with mental health conditions in your workplace?', font = 'Ariel 25 bold')
-    obc_Label.grid(row=3,column=0, padx = 10, pady = 15)
+    obc_Label.grid(row=4,column=0, padx = 10, pady = 15)
     obc_c = StringVar()
     obc_c.set('Select')
     list_of_obc = ['Yes','No',"I don't know"]
     droplist12 = OptionMenu(Frame,obc_c,*list_of_obc) 
-    droplist12.grid(row=3,column=1)
+    droplist12.grid(row=4,column=1)
 
     comment = tk.Entry(root, font = 'Ariel 15 bold')
     comment.insert('end','Enter some comments')
@@ -356,7 +388,7 @@ def fill_form4():
         print(final_dict)
         finish()
 
-    finish_button = tk.Button(root, command = submit_button, text = 'String',font = 'Ariel 15 bold')
+    finish_button = tk.Button(root, command = submit_button, text = 'Next',font = 'Ariel 15 bold')
     finish_button.pack()
     
 def fill_form3():
@@ -365,27 +397,27 @@ def fill_form3():
     Title_Label = tk.Label(root, text = 'Mental Health Survey', font = 'Ariel 40 bold', pady = 12)
     Title_Label.pack()
 
-    Frame = tk.Frame(root, pady=20)
+    Frame = tk.Frame(root, pady=8)
     Frame.pack()
 
-    seek_Label = tk.Label(Frame, text='Does your employer provide resources to learn more about mental health issues and how to seek help?', font = 'Ariel 25 bold')
-    seek_Label.grid(row=0,column=0, padx = 10, pady = 15)
+    seek_Label = tk.Label(Frame, text='Does your employer provide resources to \nlearn more about mental health issues \nand how to seek help?', font = 'Ariel 25 bold')
+    seek_Label.grid(row=0,column=0, padx = 10, pady = 5)
     seek_c = StringVar()
     seek_c.set('Select')
     list_of_seek = ['Yes','No',"I don't know"]
     droplist5 = OptionMenu(Frame,seek_c,*list_of_seek)
     droplist5.grid(row=0,column=1)
 
-    anon_Label = tk.Label(Frame, text='Is your anonymity protected if you choose to take advantage of mental \nhealth or substance abuse treatment resources?', font = 'Ariel 25 bold')
-    anon_Label.grid(row=1,column=0, padx = 10, pady = 15)
+    anon_Label = tk.Label(Frame, text='Is your anonymity protected if you choose to\n take advantage of mental health or \nsubstance abuse treatment resources?', font = 'Ariel 25 bold')
+    anon_Label.grid(row=1,column=0, padx = 10, pady = 5)
     anon_c = StringVar()
     anon_c.set('Select')
     list_of_anon = ['Yes','No',"I don't know"]
     droplist5 = OptionMenu(Frame,anon_c,*list_of_anon)
     droplist5.grid(row=1,column=1)
 
-    label_Label = tk.Label(Frame, text='How easy is it for you to take medical leave for a mental health condition?', font = 'Ariel 25 bold')
-    label_Label.grid(row=2,column=0, padx = 10, pady = 15)
+    label_Label = tk.Label(Frame, text='How easy is it for you to take medical \nleave for a mental health condition?', font = 'Ariel 25 bold')
+    label_Label.grid(row=2,column=0, padx = 10, pady = 5)
     label_c = StringVar()
     label_c.set('Select')
     list_of_label = ['Yes','No',"I don't know"]
@@ -393,7 +425,7 @@ def fill_form3():
     droplist6.grid(row=2,column=1)
 
     mhc_Label = tk.Label(Frame, text='Do you think that discussing a mental health \nissue with your employer would have negative consequences?', font = 'Ariel 25 bold')
-    mhc_Label.grid(row=3,column=0, padx = 10, pady = 15)
+    mhc_Label.grid(row=3,column=0, padx = 10, pady = 5)
     mhc_c = StringVar()
     mhc_c.set('Select')
     list_of_mhc = ['Yes','No','Maybe']
@@ -401,7 +433,7 @@ def fill_form3():
     droplist7.grid(row=3,column=1)
 
     phc_Label = tk.Label(Frame, text='Do you think that discussing a physical \nissue with your employer would have negative consequences?', font = 'Ariel 25 bold')
-    phc_Label.grid(row=4,column=0, padx = 10, pady = 15)
+    phc_Label.grid(row=4,column=0, padx = 10, pady = 5)
     phc_c = StringVar()
     phc_c.set('Select')
     list_of_phc = ['Yes','No','Maybe']
@@ -409,7 +441,7 @@ def fill_form3():
     droplist8.grid(row=4,column=1)
 
     cow_Label = tk.Label(Frame, text='Would you be willing to discuss a mental\n health issue with your coworkers?', font = 'Ariel 25 bold')
-    cow_Label.grid(row=5,column=0, padx = 10, pady = 15)
+    cow_Label.grid(row=5,column=0, padx = 10, pady = 5)
     cow_c = StringVar()
     cow_c.set('Select')
     list_of_cow = ['Yes','No','Some of them']
@@ -434,7 +466,7 @@ def fill_form2():
     Title_Label = tk.Label(root, text = 'Mental Health Survey', font = 'Ariel 40 bold', pady = 12)
     Title_Label.pack()
 
-    Frame = tk.Frame(root, pady=20)
+    Frame = tk.Frame(root, pady=12)
     Frame.pack()
 
     noempl_Label = tk.Label(Frame, text='How many employees does your \ncompany or organization have?', font = 'Ariel 25 bold')
@@ -445,7 +477,7 @@ def fill_form2():
     droplist2 = OptionMenu(Frame,noempl_c,*list_of_noempl)
     droplist2.grid(row=0,column=1)
 
-    Frame1 = tk.Frame(Frame, pady=20)
+    Frame1 = tk.Frame(Frame, pady=12)
     Frame1.grid(row=1,column=1)
     remote_var = IntVar()
     remote_Label = tk.Label(Frame, text='Do you work remotely at least 50% of the time?', font = 'Ariel 25 bold')
@@ -455,7 +487,7 @@ def fill_form2():
     remote_r_yes.grid(column=0, row=0)
     remote_r_no.grid(column=1, row=0)
 
-    Frame1 = tk.Frame(Frame, pady=20)
+    Frame1 = tk.Frame(Frame, pady=12)
     Frame1.grid(row=2,column=1)
     tech_var = IntVar()
     tech_Label = tk.Label(Frame, text='Is your employer primarily \na tech company/organization?', font = 'Ariel 25 bold')
@@ -465,8 +497,8 @@ def fill_form2():
     tech_r_yes.grid(column=0, row=0)
     tech_r_no.grid(column=1, row=0)
 
-    benefit_Label = tk.Label(Frame, text='Does your employer provide mental health benefits?', font = 'Ariel 25 bold')
-    benefit_Label.grid(row=3,column=0, padx = 10, pady = 15)
+    benefit_Label = tk.Label(Frame, text='Does your employer provide \nmental health benefits?', font = 'Ariel 25 bold')
+    benefit_Label.grid(row=3,column=0, padx = 10, pady = 12)
     benefit_c = StringVar()
     benefit_c.set('Select')
     list_of_benefit = ['Yes','No',"I don't know"]
@@ -474,7 +506,7 @@ def fill_form2():
     droplist3.grid(row=3,column=1)
 
     coptions_Label = tk.Label(Frame, text='Do you know the options for mental\n health care your employer provides?', font = 'Ariel 25 bold')
-    coptions_Label.grid(row=4,column=0, padx = 10, pady = 15)
+    coptions_Label.grid(row=4,column=0, padx = 10, pady = 12)
     coptions_c = StringVar()
     coptions_c.set('Select')
     list_of_coptions = ['Yes','No',"I don't know"]
@@ -482,7 +514,8 @@ def fill_form2():
     droplist4.grid(row=4,column=1)
 
     wellness_Label = tk.Label(Frame, text='Has your employer ever discussed mental\n health as part of an employee wellness program?', font = 'Ariel 25 bold')
-    wellness_Label.grid(row=5,column=0, padx = 10, pady = 15)
+    wellness_Label.grid(row=5,column=0, padx = 10, pady = 12
+                        )
     wellness_c = StringVar()
     wellness_c.set('Select')
     list_of_wellness = ['Yes','No',"I don't know"]
@@ -552,7 +585,7 @@ def fill_form1():
     Family_Hist_Employed_r_yes.grid(column=0, row=0)
     Family_Hist_Employed_r_no.grid(column=1, row=0)
     
-    Work_inter_Label = tk.Label(Frame, text='Do you have a family history \nof mental illness?', font = 'Ariel 25 bold')
+    Work_inter_Label = tk.Label(Frame, text='If you have a mental health condition, do you \nfeel that it interferes with your work?', font = 'Ariel 25 bold')
     Work_inter_Label.grid(row=6,column=0, padx = 10, pady = 15)
     Work_inter_c = StringVar()
     Work_inter_c.set('Select')
