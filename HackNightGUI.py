@@ -287,10 +287,7 @@ def finish():
         print(model.score(X_test,y_test))
 
     raw_train_data = read_csv_to_dataframe('trainms.csv')
-    col = [i for i in raw_train_data.columns]
-    
-    ndf = pd.DataFrame(columns=col)
-    
+    col = [i for i in raw_train_data.columns]    
     dropped_columns = ['s.no','Timestamp','state','comments',"Country",'anonymity']
     dropped_train_data = drop_labels(raw_train_data,dropped_columns)
     train_data = convert_to_integer(dropped_train_data)
@@ -303,14 +300,33 @@ def finish():
             lst.append(templst[i])
     print(lst)
 
-    #not working, maybe convert to temp csv?
-    ndf = ndf.append([lst])
-    print('hello',ndf)
+    with open('temp.csv','w') as file:
+        string = ''
+        for i in col:
+            string = string+','+str(i)
+        string = string.rstrip(',')
+        file.write(string+'\n')
+        string = ''
+        for i in lst:
+            string = string+','+str(i)
+        string = string.rstrip(',')
+        file.write(string)
+
+    raw_test_data = read_csv_to_dataframe('temp.csv')
     dropped_columns = ['s.no','Timestamp','state','comments',"Country",'anonymity']
-    dropped_test_data = drop_labels(ndf,dropped_columns)
+    dropped_test_data = drop_labels(raw_test_data,dropped_columns)
     test_data = convert_to_integer(dropped_test_data)
     result = predict_with_model(trained_model,test_data)
+
     print(result)
+    #not working, maybe convert to temp csv?
+##    ndf = ndf.append([lst])
+##    print('hello',ndf)
+##    dropped_columns = ['s.no','Timestamp','state','comments',"Country",'anonymity']
+##    dropped_test_data = drop_labels(ndf,dropped_columns)
+##    test_data = convert_to_integer(dropped_test_data)
+##    result = predict_with_model(trained_model,test_data)
+##    print(result)
     
 ##    conversion = {'nan':-1,'Yes':1,'No':0,"I don't know":1.5,'Not sure':2.5,'Maybe':1.5,'Some of them':-0.5,\
 ##                      'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':-0.75,'Somewhat difficult':0.5,'Very difficult':-1}
