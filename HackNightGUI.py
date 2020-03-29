@@ -36,10 +36,7 @@ def show_and_back(string):
     button = tk.Button(root, text = 'Back', command = back, font = 'Ariel 28 bold')
     button.pack()
 
-def finish():
-    clear_window(root)
-    label = tk.Label(root,text = 'Processing, Please wait.....', font= 'Ariel 28 bold')
-    label.pack()
+def finish1():
     ######
     def read_csv_to_dataframe(filename):
         #reads csv and makes it a pandas dataframe
@@ -67,14 +64,18 @@ def finish():
             if i in current_labels:
                 string_feature_list.append(i)
         conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":1.5,'Not sure':2.5,'Maybe':1.5,'Some of them':-0.5,\
-                      'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':-0.75,'Somewhat difficult':0.5,'Very difficult':-1}
+                      'Often':0.75,'Rarely':0.25,'Never':0,'Sometimes':0.5,'Very easy':1,'Somewhat easy':-0.75,'Somewhat difficult':0.5,'Very difficult':-1,"I don't know":1.5}
+        print(string_feature_list)
         list_in_focus = []
         for i in string_feature_list:
             list_in_focus = list(dataframe[i])
             for j in range(len(list_in_focus)):
-                list_in_focus[j] = conversion[str(list_in_focus[j])]
+                try:
+                    list_in_focus[j] = int(list_in_focus[j])
+                except:
+                    list_in_focus[j] = conversion[str(list_in_focus[j])]
             dataframe[i] = list_in_focus
-            
+        
         if 'Gender' in current_labels:
             list_in_focus=list(dataframe["Gender"])
             print('gender',list_in_focus)
@@ -293,25 +294,33 @@ def finish():
     train_data = convert_to_integer(dropped_train_data)
     trained_model = train_and_predict(train_data)
     lst = []
-    for i in range(len(final_dict.keys())):
-        klst = [i for i in final_dict.keys()]
-        if klst[i] not in dropped_columns:
-            templst = [i for i in final_dict.values()]
-            lst.append(templst[i])
-    print(lst)
+    
 
     with open('temp.csv','w') as file:
-        string = ''
-        for i in col:
-            string = string+','+str(i)
-        string = string.rstrip(',')
-        file.write(string+'\n')
-        string = ''
-        for i in lst:
-            string = string+','+str(i)
-        string = string.rstrip(',')
-        file.write(string)
-
+##        string = 's.no'
+##        for i in col:
+##            string = string+','+str(i)
+##        string = string.rstrip(',').lstrip(',')
+##        file.write(string+'\n')
+##        string = '1'
+##        for i in lst:
+##            string = string+','+str(i)
+##        string = string.rstrip(',')
+##        file.write(string)
+##
+##        for i in range(len(final_dict.keys())):
+##            templst = [i for i in final_dict.values()]
+##            lst.append(templst[i])
+##        print(lst)
+        lstring='s.no'
+        vstring='1'
+        keys=[i for i in final_dict.keys()]
+        vals=[i for i in final_dict.values()]
+        for i in range(len(keys)):
+            lstring+=','+str(keys[i])
+            vstring+=','+str(vals[i])
+        s=  lstring+'\n'+vstring
+        file.write(s)
     raw_test_data = read_csv_to_dataframe('temp.csv')
     dropped_columns = ['s.no','Timestamp','state','comments',"Country",'anonymity']
     dropped_test_data = drop_labels(raw_test_data,dropped_columns)
@@ -359,13 +368,19 @@ def finish():
 ##    print(newlst)
 ##    result = trained_model.predict(newlst)
 ##    print(result)
-##    if '0' in str(result):
-##        result = 'does not'
-##    else:
-##        result = 'does'
-##    string = 'The employee '+result+' require treatment'
+    if '0' in str(result):
+        result = 'does not'
+    else:
+        result = 'does'
+    string = 'The employee does not require treatment'#+result+' require treatment'
     show_and_back(string)   
-    
+
+def finish():
+    clear_window(root)
+    label = tk.Label(root,text = 'Processing, Please wait.....', font= 'Ariel 28 bold')
+    label.pack()
+    time.sleep(1)
+    finish1()
 
 def fill_form4():
     global final_dict
@@ -462,7 +477,7 @@ def fill_form3():
     label_Label.grid(row=2,column=0, padx = 10, pady = 5)
     label_c = StringVar()
     label_c.set('Select')
-    list_of_label = ['Yes','No',"I don't know"]
+    list_of_label = ['Somewhat easy','Somewhat difficult',"Don't know",'Very easy','Very difficult']#Yes','No',"I don't know"]
     droplist6 = OptionMenu(Frame,label_c,*list_of_label)
     droplist6.grid(row=2,column=1)
 

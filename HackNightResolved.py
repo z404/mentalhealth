@@ -53,7 +53,7 @@ def convert_to_integer(dataframe):
     #converts all default strings to numbers in the dataframe
     non_numerical = ['self_employed','family_history','treatment','remote_work','work_interfere','tech_company','benefits','seek_help',\
                      'leave','mental_health_consequence','phys_health_consequence','mental_health_interview','phys_health_interview',\
-                     'mental_vs_physical','obs_consequence','supervisor','care_options']
+                     'mental_vs_physical','obs_consequence','supervisor','care_options','wellness_program','coworkers']
     current_labels = dataframe.columns.tolist()
     string_feature_list = []
     for i in non_numerical:
@@ -93,6 +93,7 @@ def convert_to_integer(dataframe):
             else:
                 list_in_focus[i] = 1500
         dataframe['no_employees'] = list_in_focus
+    dataframe.to_csv('num_csv.csv')
 
     if 'care_options' in current_labels and 'wellness_program' in current_labels:
         co = list(dataframe['care_options'])
@@ -287,7 +288,7 @@ trained_model = train_and_predict(train_data)
 
 raw_test_data = read_csv_to_dataframe('testms.csv')
 dropped_test_data = drop_labels(raw_test_data,dropped_columns)
-test_data= convert_to_integer(dropped_test_data)
+#test_data= convert_to_integer(dropped_test_data)
 
 solution_data = read_csv_to_dataframe('samplems.csv')
 conversion = {'nan':-1,'Yes':1,'No':0,"Don't know":0.5,'Not sure':0.5,'Maybe':0.5,'Some of them':0.5,\
